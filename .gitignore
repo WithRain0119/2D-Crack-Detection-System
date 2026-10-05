@@ -1,3 +1,6 @@
 prompt.md
 CLAUDE.md
 version2.pt
+.gitignore
+.vscode/*
+log/*
