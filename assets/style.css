@@ -519,6 +519,24 @@ main {
   text-align: center;
   word-break: break-all;
 }
+
+/* 对比区顶部居中的当前文件名标签（横跨两图上方） */
+.viewer-title {
+  grid-column: 1 / -1;
+  justify-self: center;
+  max-width: 90%;
+  padding: 5px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(61, 220, 255, 0.35);
+  background: rgba(61, 220, 255, 0.08);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  word-break: break-all;
+  text-align: center;
+}
 .hint-info  { color: var(--text-2); }
 .hint-warn  { color: var(--warn); }
 .hint-error { color: var(--danger); }

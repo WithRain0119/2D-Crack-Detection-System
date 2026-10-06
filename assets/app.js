@@ -65,6 +65,7 @@
     App.el('resultImg').hidden = true;
     App.el('fallbackCanvas').hidden = true;
     App.render.renderViewerHint('', 'info');
+    App.render.renderViewerTitle('');
     App.el('progressCard').hidden = true;
     App.el('resultCard').hidden = true;
     App.setText(App.el('progressText'), '已处理 0/0');

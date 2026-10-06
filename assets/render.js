@@ -136,6 +136,9 @@
     viewerData = data;
     fallbackPending = false;
 
+    // 对比区顶部：当前对比组的原图文件名
+    R.renderViewerTitle(data.name || stored);
+
     // 左：原图（前端按 input_dir 拼 URL）
     var orig = App.el('origImg');
     orig.src = App.urlForInput(stored);
@@ -175,6 +178,14 @@
     if (!text) { n.hidden = true; App.setText(n, ''); return; }
     n.className = 'viewer-hint hint-' + (type || 'info');
     App.setText(n, text);
+    n.hidden = false;
+  };
+
+  // 对比区顶部居中显示当前原图文件名（text: 文件名；空则隐藏）
+  R.renderViewerTitle = function (name) {
+    var n = App.el('viewerTitle');
+    if (!name) { n.hidden = true; App.setText(n, ''); return; }
+    App.setText(n, name);
     n.hidden = false;
   };
 
@@ -397,6 +408,9 @@
     fallbackPending = false;
 
     App.el('resultCard').hidden = false; // 本会话可能还没建过批次
+
+    // 对比区顶部：该记录的原图文件名
+    R.renderViewerTitle(rec.filename);
 
     var orig = App.el('origImg');
     if (rec.input_url) {
