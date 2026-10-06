@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 与 h1 同名 -->
+  <title>水工建筑物智能巡检分析系统</title>
+  <!-- 零 CDN：仅引用本地样式 -->
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+  <!-- ==================== 顶部状态条（sticky 毛玻璃） ==================== -->
+  <header class="topbar">
+    <div class="topbar-main">
+      <h1>水工建筑物智能巡检分析系统</h1>
+      <div class="status-strip">
+        <span id="backendBadge" class="badge badge-unknown">检测后端…</span>
+        <span id="batchBadge" class="badge">未创建批次</span>
+        <span id="pathBadge" class="badge mono" hidden></span>
+      </div>
+      <div class="topbar-right">
+        <button id="btnSettings" type="button" class="btn-icon" aria-label="设置">⚙</button>
+        <div id="settingsPanel" class="settings-panel" hidden>
+          <h3>设置</h3>
+          <button id="btnClearLogs" type="button" class="btn-secondary">清空日志文件</button>
+          <p id="settingsMsg" class="settings-msg" hidden></p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== 顶部统一提示条（textContent 填充） ==================== -->
+  <div id="globalAlert" class="alert" hidden></div>
+
+  <main>
+    <!-- ==================== 操作区 ==================== -->
+    <section id="actionCard" class="card">
+      <div id="dropZone">
+        <div class="drop-actions">
+          <button id="btnFolder" type="button" class="btn-secondary">📁 选择文件夹</button>
+          <button id="btnImages" type="button" class="btn-secondary">🖼️ 选择图片</button>
+        </div>
+        <p id="fileSummary" class="file-summary">未选择文件</p>
+        <p id="skipHint" class="skip-hint" hidden></p>
+        <p class="drop-tip">也可以将图片或文件夹拖拽到此处</p>
+      </div>
+      <input type="file" id="folderInput" webkitdirectory multiple hidden>
+      <input type="file" id="imageInput" accept="image/*" multiple hidden>
+
+      <!-- 置信度滑块（随 init 上传） -->
+      <div class="conf-row">
+        <label for="confRange">置信度阈值</label>
+        <input type="range" id="confRange" min="0.05" max="0.9" step="0.05" value="0.25">
+        <output id="confValue" class="mono">0.25</output>
+      </div>
+
+      <button id="btnAnalyze" type="button" class="btn-primary" disabled>开始分析</button>
+    </section>
+
+    <!-- ==================== 进度区 ==================== -->
+    <section id="progressCard" class="card" hidden>
+      <div class="progress-head">
+        <span id="progressText" class="mono">已处理 0/0</span>
+        <span id="currentFile" class="current-file" hidden></span>
+      </div>
+      <div class="track"><div id="progressBar"></div></div>
+      <p id="batchSummary" class="batch-summary" hidden></p>
+    </section>
+
+    <!-- ==================== 结果区：缩略图 + 原图/结果图对比 + 裂缝明细表 ==================== -->
+    <section id="resultCard" class="card" hidden>
+      <aside id="thumbList"></aside>
+      <div class="viewer">
+        <figure class="figure">
+          <figcaption>原图</figcaption>
+          <img id="origImg" alt="原图" hidden>
+        </figure>
+        <figure class="figure">
+          <figcaption>识别结果</figcaption>
+          <img id="resultImg" alt="识别结果" hidden>
+          <canvas id="fallbackCanvas" hidden></canvas>
+        </figure>
+        <p id="viewerHint" class="viewer-hint" hidden></p>
+      </div>
+      <div class="table-wrap">
+        <!-- 表头严格 11 列，与 tbody 每行 td 数一致 -->
+        <table id="boxTable">
+          <thead>
+            <tr>
+              <th>序号</th>
+              <th>类别</th>
+              <th>置信度</th>
+              <th>x1</th>
+              <th>y1</th>
+              <th>x2</th>
+              <th>y2</th>
+              <th>归一化x1</th>
+              <th>归一化y1</th>
+              <th>归一化x2</th>
+              <th>归一化y2</th>
+            </tr>
+          </thead>
+          <tbody id="boxBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== 历史检测记录 ==================== -->
+    <section id="recordsCard" class="card">
+      <h2>历史检测记录</h2>
+      <div id="recordsList"></div>
+    </section>
+  </main>
+
+  <!-- 脚本顺序：config → api → render → app；普通 script（file:// 下严禁 ES module） -->
+  <script src="assets/config.js"></script>
+  <script src="assets/api.js"></script>
+  <script src="assets/render.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
