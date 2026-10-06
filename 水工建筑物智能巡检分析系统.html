@@ -25,14 +25,47 @@
     </div>
   </header>
 
-  <!-- 设置：全屏遮罩 + 居中模态窗口（点遮罩或关闭按钮退出） -->
+  <!-- 设置：全屏遮罩 + 居中模态窗（左导航 / 右内容；唯一关闭出口=右上角 ✕） -->
   <div id="settingsOverlay" class="settings-overlay" hidden>
     <div id="settingsPanel" class="settings-modal" role="dialog" aria-modal="true" aria-label="设置">
-      <h3>设置</h3>
-      <button id="btnClearLogs" type="button" class="btn-secondary">清空日志文件</button>
-      <button id="btnClearRecords" type="button" class="btn-secondary">清空历史检测记录</button>
-      <p id="settingsMsg" class="settings-msg" hidden></p>
-      <button id="btnSettingsClose" type="button" class="btn-secondary">关闭</button>
+      <div class="settings-head">
+        <span class="settings-title">设置</span>
+        <button id="btnSettingsClose" type="button" class="settings-close" aria-label="关闭">✕</button>
+      </div>
+      <div class="settings-body">
+        <!-- 左侧：分类导航（通用为当前项；其余占位待后期设计） -->
+        <nav class="settings-nav">
+          <button type="button" class="nav-item is-active" data-pane="general">通用</button>
+          <button type="button" class="nav-item" data-pane="appearance">外观</button>
+          <button type="button" class="nav-item" data-pane="model">模型</button>
+          <button type="button" class="nav-item" data-pane="about">关于</button>
+        </nav>
+        <!-- 右侧：分类内容 -->
+        <div class="settings-content">
+          <div class="pane" id="pane-general">
+            <h4 class="pane-title">通用</h4>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">运行日志</div>
+                <div class="setting-desc">删除历史日志文件，当前运行中的日志将保留</div>
+              </div>
+              <button id="btnClearLogs" type="button" class="btn-secondary">清空日志文件</button>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">检测历史</div>
+                <div class="setting-desc">清空全部历史检测记录，磁盘上的图片不受影响</div>
+              </div>
+              <button id="btnClearRecords" type="button" class="btn-secondary">清空历史检测记录</button>
+            </div>
+            <p id="settingsMsg" class="settings-msg" hidden></p>
+          </div>
+          <div class="pane" id="pane-placeholder" hidden>
+            <h4 class="pane-title" id="placeholderTitle"></h4>
+            <p class="pane-empty">该设置模块规划中，敬请期待</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

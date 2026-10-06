@@ -238,18 +238,34 @@
     }
   };
 
-  /* ==================== 设置面板（居中模态窗） ==================== */
+  /* ==================== 设置面板（居中模态窗：左导航 / 右内容） ==================== */
   function bindSettings() {
-    // 右上角 ⚙ → 打开居中模态窗（打开时清掉上次提示）
+    // 右上角 ⚙ → 打开居中模态窗（打开时清掉上次提示并回到"通用"页）
     App.el('btnSettings').addEventListener('click', function () {
       var ov = App.el('settingsOverlay');
       ov.hidden = false;
       App.el('settingsMsg').hidden = true;
       App.setText(App.el('settingsMsg'), '');
+      // 默认回到通用
+      var first = document.querySelector('.nav-item[data-pane="general"]');
+      if (first) first.click();
     });
-    // 唯一关闭出口：窗内「关闭」按钮（点遮罩/Esc 均不关闭）
+    // 唯一关闭出口：右上角 ✕（点遮罩/Esc 均不关闭）
     App.el('btnSettingsClose').addEventListener('click', function () {
       App.el('settingsOverlay').hidden = true;
+    });
+
+    // 左侧分类切换：general 显示通用面板，其余显示占位面板（待后期设计）
+    document.querySelectorAll('.nav-item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        document.querySelectorAll('.nav-item').forEach(function (n) {
+          n.classList.toggle('is-active', n === item);
+        });
+        var isGeneral = item.dataset.pane === 'general';
+        App.el('pane-general').hidden = !isGeneral;
+        App.el('pane-placeholder').hidden = isGeneral;
+        if (!isGeneral) App.setText(App.el('placeholderTitle'), item.textContent);
+      });
     });
     App.el('btnClearLogs').addEventListener('click', async function () {
       if (!confirm('确认清空历史日志文件？当前运行中的日志将保留。')) return;
