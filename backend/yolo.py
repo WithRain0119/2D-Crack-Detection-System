@@ -17,7 +17,7 @@ MODEL = None
 def load_model() -> None:
     """同步加载一次模型（main 在 uvicorn 启动前调用）。"""
     global MODEL
-    LOG.info("开始加载模型：%s", config.MODEL_PATH)
+    LOG.core("开始加载模型：%s", config.MODEL_PATH)
     t0 = time.time()
     try:
         MODEL = YOLO(config.MODEL_PATH)
@@ -25,7 +25,7 @@ def load_model() -> None:
         LOG.exception("模型加载失败：%s", config.MODEL_PATH)
         MODEL = None
         return
-    LOG.info("模型加载完成，耗时 %.2f 秒，类别：%s", time.time() - t0, MODEL.names)
+    LOG.core("模型加载完成，耗时 %.2f 秒，类别：%s", time.time() - t0, MODEL.names)
 
 
 def detect_one(img_path: str, out_path: str, conf) -> dict:

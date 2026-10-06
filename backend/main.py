@@ -22,7 +22,7 @@ def main() -> None:
 
     # 2) 日志系统：本次启动新建 log/<全角冒号秒级>.log
     setup_logging()
-    LOG.info("cwd 检查通过，工作目录：%s", os.getcwd())
+    LOG.core("cwd 检查通过，工作目录：%s", os.getcwd())
 
     # 3) 单实例锁：失败打印"已有实例正在运行"并退出（进程退出时 atexit 自动释放锁）
     if not acquire_lock():
@@ -43,7 +43,7 @@ def main() -> None:
 
     # 8) FastAPI + uvicorn（无 reload：会双加载模型并破坏单实例锁）
     app = create_app()
-    LOG.info("uvicorn 开始监听 http://%s:%s", config.HOST, config.PORT)
+    LOG.core("uvicorn 开始监听 http://%s:%s", config.HOST, config.PORT)
     uvicorn.run(app, host=config.HOST, port=config.PORT, access_log=False)
 
 

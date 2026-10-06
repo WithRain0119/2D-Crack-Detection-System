@@ -49,7 +49,7 @@ def _release_lock(expected_pid: int) -> None:
     try:
         if _read_lock_pid() == expected_pid:
             os.remove(config.LOCK_PATH)
-            LOG.info("已释放单实例锁（pid=%s）", expected_pid)
+            LOG.core("已释放单实例锁（pid=%s）", expected_pid)
     except OSError as e:
         LOG.warning("释放单实例锁失败：%s", e)
 
@@ -76,7 +76,7 @@ def acquire_lock() -> bool:
         with os.fdopen(fd, "w", encoding="utf-8") as fp:
             fp.write(str(pid))
         atexit.register(_release_lock, pid)
-        LOG.info("单实例锁获取成功：%s（pid=%s）", config.LOCK_PATH, pid)
+        LOG.core("单实例锁获取成功：%s（pid=%s）", config.LOCK_PATH, pid)
         return True
     LOG.warning("单实例锁获取失败")
     return False

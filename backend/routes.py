@@ -133,7 +133,7 @@ def _register_routes(app: FastAPI) -> None:
                     LOG.info("logs/clear 删除日志：%s", fn)
                 except OSError as e:
                     LOG.warning("logs/clear 删除失败 %s：%s", fn, e)
-        LOG.info("logs/clear 完成：删除 %d 个日志文件", deleted)
+        LOG.core("logs/clear 完成：删除 %d 个日志文件", deleted)
         return {"deleted": deleted, "error": ""}
 
 

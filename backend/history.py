@@ -36,7 +36,7 @@ def init_db() -> None:
     with sqlite3.connect(config.DB_PATH) as conn:
         conn.execute(_SCHEMA)
         count = conn.execute("SELECT COUNT(*) FROM records").fetchone()[0]
-    LOG.info("SQLite 建表完成：%s，已有历史记录 %d 条", config.DB_PATH, count)
+    LOG.core("SQLite 建表完成：%s，已有历史记录 %d 条", config.DB_PATH, count)
 
 
 def add_record(rec: dict) -> None:

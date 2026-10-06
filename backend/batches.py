@@ -124,11 +124,11 @@ def create_batch(files, conf="0.05", mode="folder") -> dict:
 
     if saved == 0:
         shutil.rmtree(root)  # 无有效图片：不留下空目录
-        LOG.info("没有有效图片，已删除空目录 static/%s/", batch_id)
+        LOG.core("没有有效图片，已删除空目录 static/%s/", batch_id)
         return {"error": "没有有效的图片文件（仅支持 JPG/PNG/BMP/WEBP/TIF）",
                 "batch_id": batch_id}
 
-    LOG.info("批次 %s 创建完成：有效 %d 张，跳过 %d 张（同名自动去重）",
+    LOG.core("批次 %s 创建完成：有效 %d 张，跳过 %d 张（同名自动去重）",
              batch_id, saved, skipped)
     BATCHES[batch_id] = {
         "batch_id": batch_id, "mode": mode, "status": "ready",
@@ -152,7 +152,7 @@ def start_batch(batch_id: str) -> dict:
         return summary(b, "run")
     b["_started"] = True
     b["status"] = "processing"
-    LOG.info("批次 %s 后台识别任务启动（共 %d 张，conf=%s）", batch_id, b["total"], b["conf"])
+    LOG.core("批次 %s 后台识别任务启动（共 %d 张，conf=%s）", batch_id, b["total"], b["conf"])
     asyncio.get_running_loop().run_in_executor(EXECUTOR, process_batch, batch_id)
     return summary(b, "run")
 
@@ -249,7 +249,7 @@ def process_batch(batch_id: str) -> None:
     if done_n >= 1:
         b["status"] = "done"
         b["error"] = ""
-        LOG.info("批次 %s 完成：成功 %d/%d，总耗时 %.1f 秒，输出 %s",
+        LOG.core("批次 %s 完成：成功 %d/%d，总耗时 %.1f 秒，输出 %s",
                  batch_id, done_n, b["total"], time.time() - started, b["output_dir"])
     else:
         b["status"] = "failed"
@@ -372,4 +372,4 @@ def restore_batches() -> None:
         LOG.info("启动扫描恢复批次 %s：status=%s 处理 %d/%d（结果图 %d，记录 %d），created_at=%s",
                  name, status, handled_n, total, result_n, len(rec_map),
                  BATCHES[name]["created_at"])
-    LOG.info("启动扫描完成：共恢复 %d 个批次", restored)
+    LOG.core("启动扫描完成：共恢复 %d 个批次", restored)
