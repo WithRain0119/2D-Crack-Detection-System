@@ -262,6 +262,19 @@
         App.render.showAlert((e && e.message) || '连接后端失败', 'error');
       }
     });
+
+    // 清空历史检测记录：清 SQLite 全表（磁盘图片不受影响），记录区立即回空态
+    App.el('btnClearRecords').addEventListener('click', async function () {
+      if (!confirm('确认清空全部历史检测记录？此操作不可恢复，磁盘上的图片不受影响。')) return;
+      try {
+        var resp = await App.api.apiPost('/api/api/records/clear', { timeoutMs: App.TIMEOUT.def });
+        App.setText(App.el('settingsMsg'), '已清除 ' + (Number(resp.deleted) || 0) + ' 条检测记录');
+        App.el('settingsMsg').hidden = false;
+        App.render.renderRecords([]); // 记录区立即回空态（内部同步 state.records）
+      } catch (e) {
+        App.render.showAlert((e && e.message) || '连接后端失败', 'error');
+      }
+    });
   }
 
   /* ==================== 事件一次性绑定（唯一 DOMContentLoaded —— 缺陷#9 规避） ==================== */

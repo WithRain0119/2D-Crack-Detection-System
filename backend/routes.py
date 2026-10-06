@@ -136,6 +136,17 @@ def _register_routes(app: FastAPI) -> None:
         LOG.core("logs/clear 完成：删除 %d 个日志文件", deleted)
         return {"deleted": deleted, "error": ""}
 
+    # ---------- 清空历史检测记录（SQLite 全表；磁盘图片不受影响） ----------
+    @app.post("/api/api/records/clear")
+    def records_clear():
+        try:
+            deleted = history.clear_all()
+            LOG.core("records/clear 完成：清空 %d 条检测记录", deleted)
+            return {"deleted": deleted, "error": ""}
+        except Exception as e:
+            LOG.exception("records/clear 失败")
+            return {"deleted": 0, "error": str(e)[:200]}
+
 
 def _detect_single(filename: str, data: bytes, conf: str) -> dict:
     """单张同步检测的线程池实现：结果图 static/result_<uuid8>.png，成功失败都写 SQLite。"""

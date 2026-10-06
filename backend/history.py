@@ -66,6 +66,14 @@ def add_record(rec: dict) -> None:
              row["crack_count"], row["batch_id"] or "-")
 
 
+def clear_all() -> int:
+    """清空全部检测记录，返回删除条数（设置面板「清空历史检测记录」用）。"""
+    with sqlite3.connect(config.DB_PATH) as conn:
+        count = conn.execute("SELECT COUNT(*) FROM records").fetchone()[0]
+        conn.execute("DELETE FROM records")
+    return count
+
+
 def query_by_batch(batch_id: str) -> list:
     """返回指定批次的全部记录（插入序），字段同 query_all；启动恢复时用。"""
     with sqlite3.connect(config.DB_PATH) as conn:
