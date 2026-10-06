@@ -239,10 +239,6 @@
   };
 
   /* ==================== 设置面板（居中模态窗） ==================== */
-  function closeSettings() {
-    App.el('settingsOverlay').hidden = true;
-  }
-
   function bindSettings() {
     // 右上角 ⚙ → 打开居中模态窗（打开时清掉上次提示）
     App.el('btnSettings').addEventListener('click', function () {
@@ -251,14 +247,9 @@
       App.el('settingsMsg').hidden = true;
       App.setText(App.el('settingsMsg'), '');
     });
-    // 点遮罩空白处关闭（点窗口内部不关闭）
-    App.el('settingsOverlay').addEventListener('click', function (e) {
-      if (e.target === App.el('settingsOverlay')) closeSettings();
-    });
-    // 关闭按钮 / Esc
-    App.el('btnSettingsClose').addEventListener('click', closeSettings);
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && !App.el('settingsOverlay').hidden) closeSettings();
+    // 唯一关闭出口：窗内「关闭」按钮（点遮罩/Esc 均不关闭）
+    App.el('btnSettingsClose').addEventListener('click', function () {
+      App.el('settingsOverlay').hidden = true;
     });
     App.el('btnClearLogs').addEventListener('click', async function () {
       if (!confirm('确认清空历史日志文件？当前运行中的日志将保留。')) return;
