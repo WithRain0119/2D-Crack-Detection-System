@@ -238,6 +238,53 @@
     }
   };
 
+  /* ==================== 拖拽文件/文件夹递归读取 ==================== */
+  // 拖拽走 DataTransfer Entry API：整个文件夹递归收集其中的图片文件
+  // （与 <input webkitdirectory> 不同，拖拽不会触发浏览器"是否上传到此站点"确认框）
+  function collectEntry(entry) {
+    if (entry.isFile) {
+      return new Promise(function (resolve) {
+        entry.file(function (f) { resolve([f]); }, function () { resolve([]); });
+      });
+    }
+    if (!entry.isDirectory) return Promise.resolve([]);
+    var reader = entry.createReader();
+    return new Promise(function (resolve) {
+      var children = [];
+      (function readBatch() {
+        // readEntries 单次最多返回约 100 条，需循环读取直至为空
+        reader.readEntries(function (ents) {
+          if (!ents.length) {
+            Promise.all(children.map(collectEntry)).then(function (arrs) {
+              var out = [];
+              arrs.forEach(function (a) { out = out.concat(a); });
+              resolve(out);
+            });
+            return;
+          }
+          children = children.concat(ents);
+          readBatch();
+        }, function () { resolve([]); });
+      })();
+    });
+  }
+
+  function readDropped(dt) {
+    var entries = [];
+    for (var i = 0; i < (dt.items ? dt.items.length : 0); i++) {
+      var en = dt.items[i].webkitGetAsEntry && dt.items[i].webkitGetAsEntry();
+      if (en) entries.push(en);
+    }
+    if (!entries.length) {
+      return Promise.resolve(Array.prototype.slice.call(dt.files || []));
+    }
+    return Promise.all(entries.map(collectEntry)).then(function (arrs) {
+      var out = [];
+      arrs.forEach(function (a) { out = out.concat(a); });
+      return out.length ? out : Array.prototype.slice.call(dt.files || []);
+    });
+  }
+
   /* ==================== 通用确认框（替代原生 confirm：文案 + 确认/取消） ==================== */
   var confirmResolve = null;
 
@@ -347,7 +394,7 @@
       e.target.value = '';
     });
 
-    // 拖拽上传
+    // 拖拽上传（支持整个文件夹递归读取；拖拽路径不触发浏览器"上传到此站点"确认）
     var dz = App.el('dropZone');
     dz.addEventListener('dragover', function (e) {
       e.preventDefault();
@@ -357,7 +404,13 @@
     dz.addEventListener('drop', function (e) {
       e.preventDefault();
       dz.classList.remove('is-drag');
-      App.acceptFiles(e.dataTransfer && e.dataTransfer.files, 'folder');
+      var dt = e.dataTransfer;
+      if (!dt) return;
+      readDropped(dt).then(function (files) {
+        App.acceptFiles(files, 'folder');
+        // 拖拽完成不弹任何提示，直接开始上传分析
+        if (state.files.length) App.startAnalysis();
+      });
     });
 
     // 置信度滑块
