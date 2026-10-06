@@ -14,7 +14,7 @@ _PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
 
 
 def check_cwd() -> None:
-    """必须从项目根目录启动：cwd 下要有 backend/ 目录与 version2.pt，否则立即退出。"""
+    """必须从项目根目录启动：cwd 下要有 backend/ 目录与 models/version2.pt，否则立即退出。"""
     if not (os.path.isdir("backend") and os.path.isfile(config.MODEL_PATH)):
         print("请从项目根目录启动：cd 到项目根目录后执行 python backend/main.py")
         print(f"当前工作目录：{os.getcwd()}")

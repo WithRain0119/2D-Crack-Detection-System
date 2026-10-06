@@ -52,7 +52,7 @@ def create_app() -> FastAPI:
 
 
 def _register_routes(app: FastAPI) -> None:
-    # ---------- 健康检查（注意：model_path 原样返回 "version2.pt"） ----------
+    # ---------- 健康检查（注意：model_path 原样返回 config.MODEL_PATH） ----------
     @app.get("/")
     def health():
         return {"message": "服务运行中",

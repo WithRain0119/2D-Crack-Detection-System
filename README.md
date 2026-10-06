@@ -8,7 +8,7 @@
 
 | 层级 | 技术选型 | 说明 |
 |---|---|---|
-| 深度学习框架 | PyTorch（CPU 版）+ Ultralytics | YOLO 目标检测框架，加载本项目训练好的权重 `version2.pt`（crack 单类别） |
+| 深度学习框架 | PyTorch（CPU 版）+ Ultralytics | YOLO 目标检测框架，加载本项目训练好的权重 `models/version2.pt`（crack 单类别） |
 | 后端框架 | Python 3.12 + FastAPI + Uvicorn | 轻量异步 Web 框架，提供批次管理、识别推理、历史查询等 REST 接口 |
 | 数据存储 | SQLite（Python 标准库 `sqlite3`） | 检测历史持久化，重启后可查，零额外部署成本 |
 | 图像处理 | Pillow（PIL） | 图片合法性预检、识别结果图绘制保存 |
@@ -55,7 +55,7 @@
 **如何测试**：
 
 1. 从项目根目录启动后端，观察 `log/` 下生成新日志文件、控制台无异常堆栈；
-2. 浏览器访问 `http://127.0.0.1:8000/`，确认返回 `"model_loaded": true, "model_path": "version2.pt"`；
+2. 浏览器访问 `http://127.0.0.1:8000/`，确认返回 `"model_loaded": true, "model_path": "models/version2.pt"`；
 3. 用 `curl` 依次调用批次接口：上传图片 → 启动识别 → 轮询进度至完成，核对 `static/` 下 `input/` 原图与 `output/` 结果图一一对应；
 4. 负例测试：不带文件上传、上传非图片文件、伪造损坏图片、查询不存在批次，确认均有明确错误提示且不崩溃；
 5. 重启后端，确认历史批次列表与检测记录仍在（SQLite 持久化生效）；
@@ -122,7 +122,8 @@
 │   ├── config.py / logger.py / lock.py
 │   ├── yolo.py / history.py / batches.py / routes.py
 │   └── history.db                    # SQLite 检测历史（运行时生成）
-├── version2.pt                       # 训练好的 YOLO 裂缝检测权重
+├── models/
+│   └── version2.pt                   # 训练好的 YOLO 裂缝检测权重
 ├── log/                              # 运行日志（每次启动一个文件，运行时生成）
 ├── static/                           # 上传图片与识别结果（运行时生成）
 ├── prompt.md                         # 重构任务书（接口契约与验收标准）
@@ -172,7 +173,7 @@ D:\miniconda3\envs\yolo_v1\python.exe backend/main.py
 1. **提示"已有实例正在运行"**：后端同一时间只允许启动一个实例，属正常保护；若确认没有实例在跑，删除 `backend/running.lock` 后重启即可（进程被强制结束时可能残留）。
 2. **端口被占用（WinError 10048）**：执行 `netstat -ano | findstr :8000` 找到占用进程并结束，再启动后端。
 3. **前端红色提示"后端未启动"**：先按上述步骤启动后端，再刷新页面。
-4. **必须从根目录启动**：模型 `version2.pt`、日志目录、静态目录均按相对路径定位，从其他目录启动会加载失败。
+4. **必须从根目录启动**：模型 `models/version2.pt`、日志目录、静态目录均按相对路径定位，从其他目录启动会加载失败。
 5. **批次文件夹名中的全角冒号**：Windows 文件名不允许半角冒号，故日志与批次目录时间戳使用全角冒号（`：`），属正常现象。
 
 ## 六、当前局限与改进方向

@@ -8,7 +8,7 @@ PORT = 8000
 BASE_URL = "http://127.0.0.1:8000"
 
 # ---------- 路径（全部相对 cwd，必须从项目根目录启动） ----------
-MODEL_PATH = "version2.pt"          # 健康检查原样返回此字符串
+MODEL_PATH = "models/version2.pt"   # 相对项目根目录；健康检查原样返回此字符串
 STATIC_DIR = "static"
 LOG_DIR = "log"
 LOCK_PATH = "backend/running.lock"
