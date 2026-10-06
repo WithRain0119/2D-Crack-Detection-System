@@ -21,15 +21,20 @@
       </div>
       <div class="topbar-right">
         <button id="btnSettings" type="button" class="btn-icon" aria-label="设置">⚙</button>
-        <div id="settingsPanel" class="settings-panel" hidden>
-          <h3>设置</h3>
-          <button id="btnClearLogs" type="button" class="btn-secondary">清空日志文件</button>
-          <button id="btnClearRecords" type="button" class="btn-secondary">清空历史检测记录</button>
-          <p id="settingsMsg" class="settings-msg" hidden></p>
-        </div>
       </div>
     </div>
   </header>
+
+  <!-- 设置：全屏遮罩 + 居中模态窗口（点遮罩或关闭按钮退出） -->
+  <div id="settingsOverlay" class="settings-overlay" hidden>
+    <div id="settingsPanel" class="settings-modal" role="dialog" aria-modal="true" aria-label="设置">
+      <h3>设置</h3>
+      <button id="btnClearLogs" type="button" class="btn-secondary">清空日志文件</button>
+      <button id="btnClearRecords" type="button" class="btn-secondary">清空历史检测记录</button>
+      <p id="settingsMsg" class="settings-msg" hidden></p>
+      <button id="btnSettingsClose" type="button" class="btn-secondary">关闭</button>
+    </div>
+  </div>
 
   <!-- ==================== 顶部统一提示条（textContent 填充） ==================== -->
   <div id="globalAlert" class="alert" hidden></div>

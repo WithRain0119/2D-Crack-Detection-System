@@ -238,19 +238,27 @@
     }
   };
 
-  /* ==================== 设置面板 ==================== */
+  /* ==================== 设置面板（居中模态窗） ==================== */
+  function closeSettings() {
+    App.el('settingsOverlay').hidden = true;
+  }
+
   function bindSettings() {
-    App.el('btnSettings').addEventListener('click', function (e) {
-      e.stopPropagation();
-      var p = App.el('settingsPanel');
-      p.hidden = !p.hidden;
+    // 右上角 ⚙ → 打开居中模态窗（打开时清掉上次提示）
+    App.el('btnSettings').addEventListener('click', function () {
+      var ov = App.el('settingsOverlay');
+      ov.hidden = false;
+      App.el('settingsMsg').hidden = true;
+      App.setText(App.el('settingsMsg'), '');
     });
-    // 点击面板外部关闭
-    document.addEventListener('click', function (e) {
-      var p = App.el('settingsPanel');
-      if (p.hidden) return;
-      if (e.target && e.target.closest && e.target.closest('.topbar-right')) return;
-      p.hidden = true;
+    // 点遮罩空白处关闭（点窗口内部不关闭）
+    App.el('settingsOverlay').addEventListener('click', function (e) {
+      if (e.target === App.el('settingsOverlay')) closeSettings();
+    });
+    // 关闭按钮 / Esc
+    App.el('btnSettingsClose').addEventListener('click', closeSettings);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !App.el('settingsOverlay').hidden) closeSettings();
     });
     App.el('btnClearLogs').addEventListener('click', async function () {
       if (!confirm('确认清空历史日志文件？当前运行中的日志将保留。')) return;

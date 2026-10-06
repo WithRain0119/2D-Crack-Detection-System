@@ -180,26 +180,42 @@ body {
   box-shadow: var(--glow);
 }
 
-.settings-panel {
-  position: absolute;
-  right: 0;
-  top: 46px;
-  width: 240px;
-  padding: 16px;
-  background: rgba(15, 22, 41, .92);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--card-border);
-  border-radius: 14px;
-  box-shadow: var(--shadow);
-  z-index: 60;
+/* 设置：全屏遮罩 + 居中模态窗口 */
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 9, 18, .55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  z-index: 100;
   animation: fadeIn .25s;
 }
-.settings-panel h3 {
-  margin: 0 0 12px;
-  font-size: 14px;
+.settings-modal {
+  width: min(400px, calc(100vw - 48px));
+  padding: 26px 26px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(15, 22, 41, .92);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  animation: fadeIn .25s;
+}
+.settings-modal h3 {
+  margin: 0 0 2px;
+  font-size: 15px;
   letter-spacing: .08em;
   color: var(--text-2);
+  text-align: center;
+}
+.settings-modal .btn-secondary {
+  width: 100%;
 }
 .settings-msg {
   margin: 10px 0 0;
