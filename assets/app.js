@@ -238,15 +238,49 @@
     }
   };
 
+  /* ==================== 通用确认框（替代原生 confirm：文案 + 确认/取消） ==================== */
+  var confirmResolve = null;
+
+  function askConfirm(message) {
+    return new Promise(function (resolve) {
+      confirmResolve = resolve;
+      App.setText(App.el('confirmText'), message);
+      App.el('confirmOverlay').hidden = false;
+    });
+  }
+
+  function settleConfirm(yes) {
+    App.el('confirmOverlay').hidden = true;
+    if (confirmResolve) {
+      var r = confirmResolve;
+      confirmResolve = null;
+      r(yes);
+    }
+  }
+
+  /* ==================== 右下角结果提示 toast（仅 2 秒后自动关闭） ==================== */
+  var toastTimer = null;
+
+  function hideToast() {
+    clearTimeout(toastTimer);
+    App.el('toast').hidden = true;
+  }
+
+  function showToast(text, ok) {
+    clearTimeout(toastTimer);
+    App.setText(App.el('toastIcon'), ok ? '✓' : '✕');
+    App.setText(App.el('toastText'), text);
+    App.el('toast').className = 'toast ' + (ok ? 'toast-ok' : 'toast-err');
+    App.el('toast').hidden = false;
+    // 仅 2 秒后自动关闭（点击页面其他位置不会提前关闭）
+    toastTimer = setTimeout(hideToast, 2000);
+  }
+
   /* ==================== 设置面板（居中模态窗：左导航 / 右内容） ==================== */
   function bindSettings() {
-    // 右上角 ⚙ → 打开居中模态窗（打开时清掉上次提示并回到"通用"页）
+    // 右上角 ⚙ → 打开居中模态窗（打开时默认回到"通用"页）
     App.el('btnSettings').addEventListener('click', function () {
-      var ov = App.el('settingsOverlay');
-      ov.hidden = false;
-      App.el('settingsMsg').hidden = true;
-      App.setText(App.el('settingsMsg'), '');
-      // 默认回到通用
+      App.el('settingsOverlay').hidden = false;
       var first = document.querySelector('.nav-item[data-pane="general"]');
       if (first) first.click();
     });
@@ -254,6 +288,10 @@
     App.el('btnSettingsClose').addEventListener('click', function () {
       App.el('settingsOverlay').hidden = true;
     });
+
+    // 确认框两个出口（遮罩点击不关闭，与设置窗风格一致）
+    App.el('btnConfirmOk').addEventListener('click', function () { settleConfirm(true); });
+    App.el('btnConfirmCancel').addEventListener('click', function () { settleConfirm(false); });
 
     // 左侧分类切换：general 显示通用面板，其余显示占位面板（待后期设计）
     document.querySelectorAll('.nav-item').forEach(function (item) {
@@ -267,27 +305,28 @@
         if (!isGeneral) App.setText(App.el('placeholderTitle'), item.textContent);
       });
     });
+
     App.el('btnClearLogs').addEventListener('click', async function () {
-      if (!confirm('确认清空历史日志文件？当前运行中的日志将保留。')) return;
+      var yes = await askConfirm('是否要删除历史日志文件？当前运行中的日志将保留。');
+      if (!yes) return;
       try {
         var resp = await App.api.apiPost('/api/api/logs/clear', { timeoutMs: App.TIMEOUT.def });
-        App.setText(App.el('settingsMsg'), '已清除 ' + (Number(resp.deleted) || 0) + ' 个日志文件');
-        App.el('settingsMsg').hidden = false;
+        showToast('已清除 ' + (Number(resp.deleted) || 0) + ' 个日志文件', true);
       } catch (e) {
-        App.render.showAlert((e && e.message) || '连接后端失败', 'error');
+        showToast('清除失败：' + ((e && e.message) || '连接后端失败'), false);
       }
     });
 
     // 清空历史检测记录：清 SQLite 全表（磁盘图片不受影响），记录区立即回空态
     App.el('btnClearRecords').addEventListener('click', async function () {
-      if (!confirm('确认清空全部历史检测记录？此操作不可恢复，磁盘上的图片不受影响。')) return;
+      var yes = await askConfirm('是否要删除全部历史检测记录？磁盘上的图片不受影响。');
+      if (!yes) return;
       try {
         var resp = await App.api.apiPost('/api/api/records/clear', { timeoutMs: App.TIMEOUT.def });
-        App.setText(App.el('settingsMsg'), '已清除 ' + (Number(resp.deleted) || 0) + ' 条检测记录');
-        App.el('settingsMsg').hidden = false;
+        showToast('已清除 ' + (Number(resp.deleted) || 0) + ' 条检测记录', true);
         App.render.renderRecords([]); // 记录区立即回空态（内部同步 state.records）
       } catch (e) {
-        App.render.showAlert((e && e.message) || '连接后端失败', 'error');
+        showToast('清除失败：' + ((e && e.message) || '连接后端失败'), false);
       }
     });
   }

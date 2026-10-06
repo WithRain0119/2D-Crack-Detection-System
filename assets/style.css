@@ -312,10 +312,93 @@ body {
   color: var(--text-3);
   text-align: center;
 }
-.settings-msg {
-  margin: 10px 0 0;
-  font-size: 12px;
+/* ==================== 通用确认框（替代原生 confirm） ==================== */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 9, 18, .55);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  z-index: 110; /* 高于设置窗(100) */
+  animation: fadeIn .2s;
+}
+.confirm-box {
+  width: min(340px, calc(100vw - 48px));
+  padding: 26px 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: rgba(15, 22, 41, .96);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  animation: fadeIn .2s;
+}
+.confirm-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+  text-align: center;
+  word-break: break-all;
+}
+.confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+/* 两个按钮同尺寸：细长条描边样式（确认不填充） */
+.confirm-actions .btn-secondary {
+  min-width: 132px;
+  padding: 9px 22px;
+}
+
+/* ==================== 右下角结果提示 toast ==================== */
+.toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(380px, calc(100vw - 48px));
+  padding: 14px 18px;
+  background: rgba(15, 22, 41, .94);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  animation: fadeIn .25s;
+}
+.toast-ok {
+  border-color: rgba(52, 211, 153, .45);
+}
+.toast-ok .toast-icon {
   color: var(--ok);
+  text-shadow: 0 0 8px rgba(52, 211, 153, .5);
+}
+.toast-err {
+  border-color: rgba(248, 113, 113, .5);
+}
+.toast-err .toast-icon {
+  color: var(--danger);
+  text-shadow: 0 0 8px rgba(248, 113, 113, .5);
+}
+.toast-icon {
+  font-size: 15px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.toast-text {
+  font-size: 13px;
+  color: var(--text);
   word-break: break-all;
 }
 

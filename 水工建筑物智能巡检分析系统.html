@@ -58,7 +58,6 @@
               </div>
               <button id="btnClearRecords" type="button" class="btn-secondary">清空历史检测记录</button>
             </div>
-            <p id="settingsMsg" class="settings-msg" hidden></p>
           </div>
           <div class="pane" id="pane-placeholder" hidden>
             <h4 class="pane-title" id="placeholderTitle"></h4>
@@ -67,6 +66,23 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- 通用确认框（替代原生 confirm：是否删除 + 确认/取消） -->
+  <div id="confirmOverlay" class="confirm-overlay" hidden>
+    <div class="confirm-box" role="alertdialog" aria-modal="true">
+      <p id="confirmText" class="confirm-text"></p>
+      <div class="confirm-actions">
+        <button id="btnConfirmCancel" type="button" class="btn-secondary">取消</button>
+        <button id="btnConfirmOk" type="button" class="btn-secondary">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右下角结果提示（2 秒自动关闭，期间点击任意处提前关闭） -->
+  <div id="toast" class="toast" hidden>
+    <span id="toastIcon" class="toast-icon"></span>
+    <span id="toastText" class="toast-text"></span>
   </div>
 
   <!-- ==================== 顶部统一提示条（textContent 填充） ==================== -->
